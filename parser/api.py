@@ -32,11 +32,10 @@ def wiki_search(s, params=None):
 
     # search in category and deepcategory don't work :(
     default_params = {
-        "action": "query",
-        "format": "json",
-        "list": "search",
-        "srsearch": "intitle:'%s'" % s,
-        # "namespace": "4|6|14",
+        "action": "query", "format": "json", "maxlag": "3",
+        "list": "search", "srsearch": "intitle:'%s'" % s,
+        "srlimit": "5", "srinfo": "", "srprop": "",
+        "errorformat": "plaintext",
     }
 
     if params == None:
@@ -44,3 +43,12 @@ def wiki_search(s, params=None):
 
     response = request(DOMAIN+PATH, params)
     return response.json()
+
+def print_wiki_api_error(response):
+    if 'warnings' in response.keys():
+        for warning in response['warnings']:
+            print(warning['*'])
+    if 'errors' in response.keys():
+        for error in response['errors']:
+            print(error['*'])
+
