@@ -3,8 +3,6 @@
 import api
 
 if __name__ == '__main__':
-    url = api.DOMAIN + api.ROUTE
-    req = api.request(url, {})
-    json = req.json()
-    res = json['query']['search']
+    req = api.wiki_search('вольфович жириновский')
+    # req = api.wiki_search('Путин')
     import ipdb; ipdb.set_trace()
