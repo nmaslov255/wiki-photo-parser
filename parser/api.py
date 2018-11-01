@@ -33,9 +33,12 @@ def wiki_search(s, params=None):
     # search in category and deepcategory don't work :(
     default_params = {
         "action": "query", "format": "json", "maxlag": "3",
-        "list": "search", "srsearch": "intitle:'%s'" % s,
-        "srlimit": "5", "srinfo": "", "srprop": "",
-        "errorformat": "plaintext",
+        "errorformat": "plaintext", "generator": "search",
+        "prop": "pageimages|revisions|extlinks",
+        "piprop": "name|original", "rvprop": "content", 
+        "rvslots": "main","ellimit": "500",
+        "gsrsearch": "intitle:'%s'" % s,
+        "gsrlimit": "3", "gsrinfo": "", "gsrprop": ""
     }
 
     if params == None:
