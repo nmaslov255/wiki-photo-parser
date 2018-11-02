@@ -34,7 +34,7 @@ def wiki_search(s, params=None):
     default_params = {
         "action": "query", "format": "json", "maxlag": "3",
         "errorformat": "plaintext", "generator": "search",
-        "prop": "pageimages|revisions|extlinks",
+        "prop": "pageimages|revisions|extlinks", "indexpageids": 1,
         "piprop": "name|original", "rvprop": "content", 
         "rvslots": "main","ellimit": "500",
         "gsrsearch": "intitle:'%s'" % s,
