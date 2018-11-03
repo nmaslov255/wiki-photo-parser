@@ -3,6 +3,7 @@ import json
 import sys
 
 import api
+import cli
 
 
 def get_pages_from_search_results(results):
@@ -40,7 +41,7 @@ def select_page_like_person(pages, person):
 
 if __name__ == '__main__':
     print('Загружаю чиновников из файла')
-    persons = get_persons_from_dump('../persons.json')
+    persons = get_persons_from_dump(cli.args.persons)
 
     print('Чиновники загруженны, обрабатываю каждую персону.')
     photos = []
