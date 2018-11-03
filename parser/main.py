@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     print('Чиновники загруженны, обрабатываю каждую персону.')
     photos = []
-    for idx, person in enumerate(persons[:50]):
+    for idx, person in enumerate(persons[:10]):
         search_results = api.wiki_search(person['main']['person']['name'])
         api.print_wiki_api_error(search_results)
 
@@ -63,7 +63,7 @@ if __name__ == '__main__':
             })
         except Exception as e:
             print("%i) %s" % (idx, e))
-            
 
+    json.dump(photos, open(cli.args.out ,'w'))
     
     import ipdb; ipdb.set_trace()

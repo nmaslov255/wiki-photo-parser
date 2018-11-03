@@ -7,4 +7,7 @@ argparser = argparse.ArgumentParser(
 argparser.add_argument('persons', type=str,
     help='path to json file with persons from declarator')
 
+argparser.add_argument('out', type=str,
+    help='path to save results')
+
 args = argparser.parse_args()
