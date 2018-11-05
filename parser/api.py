@@ -34,11 +34,11 @@ def wiki_search(s, params=None):
     default_params = {
         "action": "query", "format": "json", "maxlag": "3",
         "errorformat": "plaintext", "generator": "search",
-        "prop": "pageimages|revisions|extlinks", "indexpageids": 1,
-        "piprop": "name|original", "rvprop": "content", 
-        "rvslots": "main","ellimit": "500",
+        "prop": "pageimages|extracts|extlinks", "indexpageids": 1,
+        "piprop": "name|original", "ellimit": "max",
         "gsrsearch": "intitle:'%s'" % s,
-        "gsrlimit": "3", "gsrinfo": "", "gsrprop": ""
+        "gsrlimit": "3", "gsrinfo": "", "gsrprop": "",
+        "exlimit": "1", "explaintext": 1, "exsectionformat": "plain",
     }
 
     if params == None:

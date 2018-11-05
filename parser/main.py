@@ -3,7 +3,7 @@ import sys
 import json
 
 from progress.bar import Bar
-from logs import Querylog
+from logs import Querylog, CLIlog
 
 import parser
 import api
@@ -11,12 +11,15 @@ import cli
 
 
 if __name__ == '__main__':
-    print('Загружаю чиновников из файла')
+    CLIlog.info('Загружаю чиновников из файла')
     persons = parser.get_persons_from_dump(cli.args.persons)
 
     photos = []
     Progress = Bar('Чиновники загруженны, обрабатываю каждую персону.', max=10)
     for idx, person in enumerate(persons[:10]):
+        person_name = person['main']['person']['name']
+        person_id   = person['main']['person']['id']
+
         results = api.wiki_search(person['main']['person']['name'])
         api.print_wiki_api_error(results)
 
@@ -25,15 +28,15 @@ if __name__ == '__main__':
             page  = parser.select_page_like_person(pages, person)
 
             photos.append({
-                'id': person['main']['person']['id'], 
-                'fullname': person['main']['person']['name'],
+                'id': person_id, 
+                'fullname': person_name,
                 'photo': {
                     'url': page['original']['source'],
                     'title': page['pageimage'],
                 }
             })
         except KeyError as e:
-            Querylog.error(e)
+            Querylog.error('Bad api response for person_id: %i' % person_id)
 
         Progress.next()
     Progress.finish()
