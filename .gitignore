@@ -4,3 +4,5 @@ lib
 share
 .DS_Store
 __pycache__
+persons.json
+parser/query.log

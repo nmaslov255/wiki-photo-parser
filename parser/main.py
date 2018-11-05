@@ -1,6 +1,9 @@
 #!/usr/bin/python3
-import json
 import sys
+import json
+
+from progress.bar import Bar
+from logs import Querylog
 
 import api
 import cli
@@ -43,14 +46,14 @@ if __name__ == '__main__':
     print('Загружаю чиновников из файла')
     persons = get_persons_from_dump(cli.args.persons)
 
-    print('Чиновники загруженны, обрабатываю каждую персону.')
     photos = []
+    Progress = Bar('Чиновники загруженны, обрабатываю каждую персону.', max=10)
     for idx, person in enumerate(persons[:10]):
-        search_results = api.wiki_search(person['main']['person']['name'])
-        api.print_wiki_api_error(search_results)
+        results = api.wiki_search(person['main']['person']['name'])
+        api.print_wiki_api_error(results)
 
         try:
-            pages = get_pages_from_search_results(search_results)
+            pages = get_pages_from_search_results(results)
             page  = select_page_like_person(pages, person)
 
             photos.append({
@@ -61,8 +64,11 @@ if __name__ == '__main__':
                     'title': page['pageimage'],
                 }
             })
-        except Exception as e:
-            print("%i) %s" % (idx, e))
+        except KeyError as e:
+            Querylog.error(e)
+
+        Progress.next()
+    Progress.finish()
 
     json.dump(photos, open(cli.args.out ,'w'))
     
