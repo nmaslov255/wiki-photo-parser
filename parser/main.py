@@ -15,7 +15,7 @@ if __name__ == '__main__':
     persons = parser.get_persons_from_dump(cli.args.persons)
 
     photos = []
-    Progress = Bar('Чиновники загруженны, обрабатываю каждую персону.', max=10)
+    Progress = Bar('Чиновники загруженны, обрабатываю каждую персону:', max=10)
     for idx, person in enumerate(persons[:10]):
         person_name = person['main']['person']['name']
         person_id   = person['main']['person']['id']
