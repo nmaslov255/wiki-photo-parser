@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import json
+import api
 
 def get_pages_from_search_results(results):
     """filter for raw api results
@@ -14,6 +15,26 @@ def get_pages_from_search_results(results):
     for idpage in results['query']['pageids']:
         page = results['query']['pages'][idpage]
         pages.append(page)
+    return pages
+
+def get_pages_by_wiki_search(person_name):
+    """search wiki pages and aggregate it if
+    
+    Arguments:
+        person_name {str} -- person name for search string
+    
+    Returns:
+        list -- api results list
+    """
+    results = api.wiki_search(person_name)
+    pages = get_pages_from_search_results(results)
+
+    if 'continue' in results:
+        search_offset = int(results['continue']['gsroffset'])
+
+        for offset in range(1, search_offset+1):
+            results = api.wiki_search(person_name, gsroffset=offset)
+            pages.extend(get_pages_from_search_results(results))
     return pages
 
 def get_persons_from_dump(file):

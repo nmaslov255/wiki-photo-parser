@@ -20,11 +20,8 @@ if __name__ == '__main__':
         person_name = person['main']['person']['name']
         person_id   = person['main']['person']['id']
 
-        results = api.wiki_search(person['main']['person']['name'])
-        api.print_wiki_api_error(results)
-
         try:
-            pages = parser.get_pages_from_search_results(results)
+            pages = parser.get_pages_by_wiki_search(person_name)
             page  = parser.select_page_like_person(pages, person)
 
             photos.append({

@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 import requests
+from logs import Querylog
 
 DOMAIN = 'https://ru.wikipedia.org/'
 PATH   = '/w/api.php'
@@ -17,7 +18,7 @@ def request(URL, params=None):
         response.raise_for_status()
     return response
 
-def wiki_search(s, params=None):
+def wiki_search(s, params=None, *, gsroffset=0):
     """function for search in wikipedia
 
     Arguments:
@@ -35,23 +36,25 @@ def wiki_search(s, params=None):
         "action": "query", "format": "json", "maxlag": "3",
         "errorformat": "plaintext", "generator": "search",
         "prop": "pageimages|extracts|extlinks", "indexpageids": 1,
-        "piprop": "name|original", "ellimit": "max",
-        "gsrsearch": "intitle:'%s'" % s,
-        "gsrlimit": "3", "gsrinfo": "", "gsrprop": "",
+        "piprop": "name|original", 
+        "elprotocol": "", "elquery": "declarator.org", "ellimit": "1",
+        "gsrsearch": "intitle:'%s'" % s, 
+        "gsrlimit": "1", "gsroffset": "%i" % gsroffset,
+        "gsrinfo": "", "gsrprop": "",
         "exlimit": "1", "explaintext": 1, "exsectionformat": "plain",
     }
 
     if params == None:
         params = default_params
 
-    response = request(DOMAIN+PATH, params)
-    return response.json()
+    response = request(DOMAIN+PATH, params).json()
+    print_wiki_api_error(response)
+    return response
 
 def print_wiki_api_error(response):
     if 'warnings' in response.keys():
         for warning in response['warnings']:
-            print(warning['*'])
+            Querylog.warning(warning['*'])
     if 'errors' in response.keys():
         for error in response['errors']:
-            print(error['*'])
-
+            Querylog.warning(error['*'])
