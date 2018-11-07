@@ -19,7 +19,7 @@ def get_pages_from_search_results(results):
         pages.append(page)
     return pages
 
-def get_pages_by_wiki_search(person_name):
+def get_pages_from_wiki_search(person_name):
     """search wiki pages and aggregate it if
     
     Arguments:

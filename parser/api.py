@@ -51,6 +51,31 @@ def wiki_search(s, params=None, *, gsroffset=0):
     print_wiki_api_error(response)
     return response
 
+def wiki_search_licence(s, params=None, *, file=False):
+    """Will return image property from wiki
+
+    Arguments:
+        filename {str} -- filename in wiki
+    
+    Keyword Arguments:
+        params {dict} -- overload default api params (default: {None})
+    
+    Returns:
+        dict -- json dict with wiki responce
+    """
+    default_params = {
+        "action": "query", "format": "json",
+        "meta": "siteinfo", "siprop": "rightsinfo",
+        "titles": 'File:' + s if file else s
+    }
+
+    if params != None:
+        params = {**default_params, **params}
+    else:
+        params = default_params
+
+    return wiki_search('', params)
+
 def print_wiki_api_error(response):
     if 'warnings' in response.keys():
         for warning in response['warnings']:
