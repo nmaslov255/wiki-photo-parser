@@ -41,7 +41,8 @@ def get_pages_from_wiki_search(person_name):
 
 def get_persons_from_dump(file):
     """read json file"""
-    persons = open(file).read()
+    with open(file) as fp:
+        persons = fp.read()
     return json.loads(persons)
 
 def select_page_like_person(pages, person):

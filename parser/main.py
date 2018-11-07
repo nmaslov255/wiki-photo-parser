@@ -41,6 +41,8 @@ if __name__ == '__main__':
     Progress.finish()
 
     CLIlog.info(('Время работы %i сек' % Progress.elapsed))
-    json.dump(photos, open(cli.args.out ,'w'))
+
+    with open(cli.args.out ,'w') as fp:
+        json.dump(photos, fp)
     
     import ipdb; ipdb.set_trace()
