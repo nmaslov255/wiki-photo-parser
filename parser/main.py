@@ -38,7 +38,7 @@ if __name__ == '__main__':
         wiki_persons = []
     
     try:
-        for idx, person in enumerate(persons[:5]):
+        for idx, person in enumerate(persons):
             try:
                 wiki_persons.append(parser.parse_person(person))
             except exceptions.WikiError as e:

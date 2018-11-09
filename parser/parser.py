@@ -22,8 +22,12 @@ def parse_person(person):
     pages = get_pages_from_wiki_search(person_name)
     page  = select_page_like_person(pages, person)
 
-    wiki_person = {'id': person_id, 'fullname': person_name,
-                   'url': page['fullurl']}
+    wiki_person = {
+        'id': person_id, 'fullname': person_name,
+        'url': page.get('fullurl', None), 
+        'declarator_profile': page.get('declarator_profile', None),
+        'words_intersection': page.get('words_intersection', None),
+    }
 
     # if page with image
     if 'pageimage' in page:
@@ -114,12 +118,15 @@ def select_page_like_person(pages, person):
             intersection = len(person_words & wiki_words)
             words_intersections_in_pages.append(intersection)
         else:
+            page['declarator_profile'] = declapage
             return page
 
     # TODO: check duplicate in count of words
     max_intersections = max(words_intersections_in_pages)
     relevant_page = words_intersections_in_pages.index(max_intersections)
+    page = pages[relevant_page]
 
+    page['words_intersection'] = max_intersections
     return pages[relevant_page]
 
 def get_declapage_from_extlinks(extlinks):
