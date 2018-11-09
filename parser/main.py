@@ -19,20 +19,25 @@ if __name__ == '__main__':
     Progress = Bar('Обрабатываю каждую персону:', max=10)
 
     wiki_person = []
-    for idx, person in enumerate(persons[:10]):
-        try:
-            wiki_person.append(parser.parse_person(person))
-        except exceptions.WikiError as e:
-            # TODO: idx must be equal person_id
-            Querylog.error("person_number: %i, %s" % (idx, e.msg))
-        except requext.Timeout:
-            Querylog.error("person_number: %i, Query timeout is expired" % idx)
-        Progress.next()
-    Progress.finish()
+    try:
+        for idx, person in enumerate(persons[:10]):
+            try:
+                wiki_person.append(parser.parse_person(person))
+            except exceptions.WikiError as e:
+                # TODO: idx must be equal person_id
+                Querylog.error("person_number: %i, %s" % (idx, e.msg))
+            except requext.Timeout:
+                message = "person_number: %i, Query timeout is expired" % idx
+                Querylog.error(message)
+            Progress.next()
+    except Exception as e:
+        Querylog.critical(e)
+    finally:    
+        Progress.finish()
 
-    CLIlog.info(('Время работы %i сек' % Progress.elapsed))
+        CLIlog.info(('Время работы %i сек' % Progress.elapsed))
 
-    with open(cli.args.out ,'w') as fp:
-        json.dump(wiki_person, fp)
-    
+        with open(cli.args.out ,'w') as fp:
+            json.dump(wiki_person, fp)
+        
     import ipdb; ipdb.set_trace()
