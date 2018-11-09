@@ -35,12 +35,12 @@ def wiki_search(s, params=None, *, gsroffset=0):
     default_params = {
         "action": "query", "format": "json", "maxlag": "3",
         "errorformat": "plaintext", "generator": "search",
-        "prop": "pageimages|extracts|extlinks", "indexpageids": 1,
-        "piprop": "name|original", 
+        "prop": "pageimages|extracts|extlinks|info", "indexpageids": 1,
+        "piprop": "name|original", "inprop": "url",
         "elprotocol": "", "elquery": "declarator.org", "ellimit": "1",
         "gsrsearch": "intitle:'%s'" % s, 
         "gsrlimit": "1", "gsroffset": "%i" % gsroffset,
-        "gsrinfo": "", "gsrprop": "",
+        "gsrinfo": "", "gsrprop": "", 'utf8': 1,
         "exlimit": "1", "explaintext": 1, "exsectionformat": "plain",
     }
 

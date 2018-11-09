@@ -2,7 +2,25 @@
 from string import punctuation as ASCII_punctuation
 import json
 
+import exceptions 
+import logs
 import api
+
+
+def get_license_from_wiki(s, *, file=False):
+    """search licence in wiki
+
+    Arguments:
+        s {str} -- document in wiki (photo, page, etc)
+    
+    Keyword Arguments:
+        file {bool} -- if you need search file (default: {False})
+    
+    Returns:
+        str|None -- licence name or none
+    """
+    response = api.wiki_search_licence(s, file=file)
+    return response['query']['rightsinfo']['text']
 
 def get_pages_from_search_results(results):
     """filter for raw api results
@@ -29,8 +47,11 @@ def get_pages_from_wiki_search(person_name):
         list -- api results list
     """
     results = api.wiki_search(person_name)
-    pages = get_pages_from_search_results(results)
 
+    if not 'query' in results:
+        raise exceptions.WikiError('Empty search result')
+
+    pages = get_pages_from_search_results(results)
     if 'continue' in results:
         search_offset = int(results['continue']['gsroffset'])
 
@@ -38,12 +59,6 @@ def get_pages_from_wiki_search(person_name):
             results = api.wiki_search(person_name, gsroffset=offset)
             pages.extend(get_pages_from_search_results(results))
     return pages
-
-def get_persons_from_dump(file):
-    """read json file"""
-    with open(file) as fp:
-        persons = fp.read()
-    return json.loads(persons)
 
 def select_page_like_person(pages, person):
     """select relevant page from the search results
@@ -147,3 +162,9 @@ def get_bag_of_words(string):
                 del words[idw]
         return words
     return []
+
+def get_persons_from_dump(file):
+    """read json file"""
+    with open(file) as fp:
+        persons = fp.read()
+    return json.loads(persons)
