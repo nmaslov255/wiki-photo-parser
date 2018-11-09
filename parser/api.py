@@ -12,7 +12,7 @@ HEADERS = {
 }
 
 def request(URL, params=None):
-    response = requests.get(URL, params=params)
+    response = requests.get(URL, params=params, timeout=3.0)
     
     if response.status_code != 200:
         response.raise_for_status()
@@ -48,7 +48,7 @@ def wiki_search(s, params=None, *, gsroffset=0):
         params = default_params
 
     response = request(DOMAIN+PATH, params).json()
-    print_wiki_api_error(response)
+    log_wiki_api_error(response)
     return response
 
 def wiki_search_licence(s, params=None, *, file=False):
@@ -76,7 +76,7 @@ def wiki_search_licence(s, params=None, *, file=False):
 
     return wiki_search('', params)
 
-def print_wiki_api_error(response):
+def log_wiki_api_error(response):
     if 'warnings' in response.keys():
         for warning in response['warnings']:
             Querylog.warning(warning['*'])

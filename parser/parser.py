@@ -2,10 +2,34 @@
 from string import punctuation as ASCII_punctuation
 import json
 
+from logs import Querylog
 import exceptions 
-import logs
 import api
 
+
+def parse_person(person):
+    person_name = person['main']['person']['name']
+    person_id   = person['main']['person']['id']
+
+    pages = get_pages_from_wiki_search(person_name)
+    page  = select_page_like_person(pages, person)
+
+    wiki_person = {'id': person_id, 'fullname': person_name,
+                   'url': page['fullurl']}
+
+    # if page with image
+    if 'pageimage' in page:
+        try:
+            image = page['pageimage']
+            url   = page['original']['source']
+            license = get_license_from_wiki(image, file=True)
+
+            photo = {'title': image, 'url': url, 'license': license}
+            wiki_person['photo'] = photo
+        except KeyError as e:
+            message = "person_id: %i, Not found key: %s" % (person_id, e)
+            Querylog.error(message)
+    return wiki_person
 
 def get_license_from_wiki(s, *, file=False):
     """search licence in wiki
