@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import sys
+import sys, os
 import json
 
 from requests import exceptions as requext
@@ -16,13 +16,31 @@ if __name__ == '__main__':
     CLIlog.info('Загружаю чиновников из файла')
     persons = parser.get_persons_from_dump(cli.args.persons)
 
-    Progress = Bar('Обрабатываю каждую персону:', max=10)
+    Progress = Bar('Обрабатываю каждую персону:', max=len(persons))
 
-    wiki_person = []
+    if cli.args.start_from:
+        try:
+            with open(cli.args.start_from) as fp:
+                wiki_persons = json.loads(fp.read())
+
+            for idx, person in enumerate(persons):
+                if person['main']['person']['id'] == wiki_persons[-1]['id']:
+                    persons = persons[idx:]; break
+                Progress.next()
+            else:
+                Progress.finish()
+                message = "Не сумел найти последний id в указанном файле."
+                CLIlog.fatal(message); sys.exit(0)
+        except FileNotFoundError:
+            CLIlog.error('Не найден файл: %s' % cli.args.start_from)
+            sys.exit(0)    
+    else:
+        wiki_persons = []
+    
     try:
-        for idx, person in enumerate(persons[:10]):
+        for idx, person in enumerate(persons[:5]):
             try:
-                wiki_person.append(parser.parse_person(person))
+                wiki_persons.append(parser.parse_person(person))
             except exceptions.WikiError as e:
                 # TODO: idx must be equal person_id
                 Querylog.error("person_number: %i, %s" % (idx, e.msg))
@@ -30,7 +48,7 @@ if __name__ == '__main__':
                 message = "person_number: %i, Query timeout is expired" % idx
                 Querylog.error(message)
             Progress.next()
-    except Exception as e:
+    except BaseException as e:
         Querylog.critical(e)
     finally:    
         Progress.finish()
@@ -38,6 +56,7 @@ if __name__ == '__main__':
         CLIlog.info(('Время работы %i сек' % Progress.elapsed))
 
         with open(cli.args.out ,'w') as fp:
-            json.dump(wiki_person, fp)
-        
-    import ipdb; ipdb.set_trace()
+            json.dump(wiki_persons, fp)
+
+        CLIlog.info('Данные сохранены в папке: ')
+        CLIlog.info(os.path.abspath(cli.args.out))

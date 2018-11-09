@@ -10,4 +10,8 @@ argparser.add_argument('persons', type=str,
 argparser.add_argument('out', type=str,
     help='path to save results')
 
+argparser.add_argument('--start-from', type=str,
+    help="File with last results. \
+    Needed for start since the collapse of the program")
+
 args = argparser.parse_args()
