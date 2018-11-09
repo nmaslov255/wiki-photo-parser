@@ -8,6 +8,14 @@ import api
 
 
 def parse_person(person):
+    """Parse info about person in wiki
+
+    Arguments:
+        person {dict} -- json info about person
+    
+    Returns:
+        dict -- found person info in wiki
+    """
     person_name = person['main']['person']['name']
     person_id   = person['main']['person']['id']
 
