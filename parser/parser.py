@@ -34,7 +34,7 @@ def parse_person(person):
         try:
             image = page['pageimage']
             url   = page['original']['source']
-            license = get_license_from_wiki(image, file=True)
+            license = get_license_from_wiki(image, is_file=True)
 
             photo = {'title': image, 'url': url, 'license': license}
             wiki_person['photo'] = photo
@@ -43,20 +43,28 @@ def parse_person(person):
             Querylog.error(message)
     return wiki_person
 
-def get_license_from_wiki(s, *, file=False):
+def get_license_from_wiki(s, *, is_file=False):
     """search licence in wiki
 
     Arguments:
         s {str} -- document in wiki (photo, page, etc)
     
     Keyword Arguments:
-        file {bool} -- if you need search file (default: {False})
+        is_file {bool} -- if you need search file (default: {False})
     
     Returns:
         str|None -- licence name or none
     """
-    response = api.wiki_search_licence(s, file=file)
-    return response['query']['rightsinfo']['text']
+    response = api.wiki_search_licence(s, file=is_file)
+
+    idpage = response['query']['pageids'][0]
+
+    try:    
+        imageinfo = response['query']['pages'][idpage].get('imageinfo', None)
+        return imageinfo[0]['extmetadata']['UsageTerms']['value']
+    except (KeyError, TypeError) as e:
+        Querylog.error('License not found for %s' % s)
+        return None
 
 def get_pages_from_search_results(results):
     """filter for raw api results

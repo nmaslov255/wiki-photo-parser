@@ -64,9 +64,13 @@ def wiki_search_licence(s, params=None, *, file=False):
         dict -- json dict with wiki responce
     """
     default_params = {
-        "action": "query", "format": "json",
-        "meta": "siteinfo", "siprop": "rightsinfo",
-        "titles": 'File:' + s if file else s
+        "action": "query", "format": "json", "maxlag": "3",
+        "errorformat": "plaintext", "prop": "imageinfo",
+        "generator": "search", "utf8": 1, "indexpageids": 1,
+        "iiprop": "extmetadata", "iiextmetadatafilter": "UsageTerms",
+        "gsrsearch": 'File:' + s if file else s,
+        "gsrlimit": "3", "gsrinfo": "", "gsrprop": ""
+
     }
 
     if params != None:

@@ -2,7 +2,7 @@
 import sys, os
 import json
 
-from requests import exceptions as requext
+from requests import exceptions as reqext
 from progress.bar import Bar
 from logs import Querylog, CLIlog
 
@@ -22,15 +22,11 @@ if __name__ == '__main__':
         try:
             with open(cli.args.start_from) as fp:
                 wiki_persons = json.loads(fp.read())
+            
+            persons = persons[len(wiki_persons):]
 
-            for idx, person in enumerate(persons):
-                if person['main']['person']['id'] == wiki_persons[-1]['id']:
-                    persons = persons[idx:]; break
+            for i in range(len(wiki_persons)):
                 Progress.next()
-            else:
-                Progress.finish()
-                message = "Не сумел найти последний id в указанном файле."
-                CLIlog.fatal(message); sys.exit(0)
         except FileNotFoundError:
             CLIlog.error('Не найден файл: %s' % cli.args.start_from)
             sys.exit(0)    
@@ -44,7 +40,7 @@ if __name__ == '__main__':
             except exceptions.WikiError as e:
                 # TODO: idx must be equal person_id
                 Querylog.error("person_number: %i, %s" % (idx, e.msg))
-            except requext.Timeout:
+            except reqext.Timeout:
                 message = "person_number: %i, Query timeout is expired" % idx
                 Querylog.error(message)
             Progress.next()
