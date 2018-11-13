@@ -23,10 +23,14 @@ if __name__ == '__main__':
             with open(cli.args.start_from) as fp:
                 wiki_persons = json.loads(fp.read())
             
-            persons = persons[len(wiki_persons):]
-
-            for i in range(len(wiki_persons)):
+            for idx, person in enumerate(persons):
+                if person['id'] == wiki_persons[-1]['id']:
+                    persons = persons[idx+1:]; break
                 Progress.next()
+            else:
+                Progress.finish()
+                message = "Не сумел найти последний id в указанном файле."
+                CLIlog.critical(message); sys.exit(0)
         except FileNotFoundError:
             CLIlog.error('Не найден файл: %s' % cli.args.start_from)
             sys.exit(0)    
@@ -51,7 +55,7 @@ if __name__ == '__main__':
 
         CLIlog.info(('Время работы %i сек' % Progress.elapsed))
 
-        with open(cli.args.out ,'w') as fp:
+        with open(cli.args.out, 'w') as fp:
             json.dump(wiki_persons, fp)
 
         CLIlog.info('Данные сохранены в папке: ')
