@@ -16,13 +16,13 @@ HEADERS = {
 
 def request(URL, params=None):
     session = requests.Session()
-    retry = Retry(total=5, read=5, connect=5, backoff_factor=2)
+    retry = Retry(total=5, read=5, connect=5, backoff_factor=5)
 
     adapter = HTTPAdapter(max_retries=retry)
     session.mount('http://', adapter)
     session.mount('https://', adapter)
 
-    response = session.get(URL, params=params, timeout=3.0)
+    response = session.get(URL, params=params, timeout=10.0)
     
     if response.status_code != 200:
         response.raise_for_status()
