@@ -1,5 +1,8 @@
 #!/usr/bin/python3
 import requests
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
+
 from logs import Querylog
 
 DOMAIN = 'https://ru.wikipedia.org/'
@@ -12,7 +15,14 @@ HEADERS = {
 }
 
 def request(URL, params=None):
-    response = requests.get(URL, params=params, timeout=3.0)
+    session = requests.Session()
+    retry = Retry(total=5, read=5, connect=5, backoff_factor=2)
+
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
+    response = session.get(URL, params=params, timeout=3.0)
     
     if response.status_code != 200:
         response.raise_for_status()
