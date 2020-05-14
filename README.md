@@ -9,5 +9,7 @@
 6. curl 'https://declarator.org/media/dumps/person.json' -o 'persons.json'
 7. python3 parser/main.py 'persons.json' 'results.json'
 
+![Shell](https://raw.githubusercontent.com/nmaslov255/hostfiles/master/wiki-photo-parser.png)
+
 ### Если нужно продолжить загрузку с предыдущих результатов
 python3 parser/main.py 'persons.json' 'results.json' --start-from 'results.json'
